@@ -4,6 +4,8 @@ from fuzzywuzzy import process
 from termcolor import colored, cprint
 from fuzzy_search.fuzzy_phrase_searcher import FuzzyPhraseSearcher
 from fuzzy_search.fuzzy_phrase_model import PhraseModel
+from rank_bm25 import BM25Okapi
+
 
 
 def load_csv():
@@ -64,9 +66,32 @@ def generate_fuzzy_model():
   res = process.extract(text1, domain_phrases, limit=5)
   print(res)
 
+def bm25_searcher():
+
+  csv_file = load_csv()
+  head = csv_file[0]
+  csv_file = csv_file[1:]
+  column_size = len(csv_file[0])
+  row_size = len(csv_file)
+  corpus = []
+
+  for i in range(row_size):
+    entry = csv_file[i]
+    corpus.append(unidecode(entry[0]).lower())
+  # print(corpus)
+  corpus = list(set(corpus))
+  corpus = [s.split() for s in corpus]
+  bm25 = BM25Okapi(corpus)
+  query = "bandung".split()
+  top_k = bm25.get_top_n(query, corpus, n=5)
+  print(top_k)
+
+
+
 
 def main():
-  generate_fuzzy_model()
+  # generate_fuzzy_model()
+  bm25_searcher()
   pass
 
 
