@@ -1,7 +1,11 @@
 fuzzy-search==1.4.3
 fuzzywuzzy==0.18.0
 gensim==4.2.0
+Levenshtein==0.20.8
 numpy==1.23.5
+python-Levenshtein==0.20.8
+rank-bm25==0.2.2
+rapidfuzz==2.13.3
 scipy==1.9.3
 smart-open==6.2.0
 termcolor==2.1.1
