@@ -82,7 +82,7 @@ def bm25_searcher():
   corpus = list(set(corpus))
   corpus = [s.split() for s in corpus]
   bm25 = BM25Okapi(corpus)
-  query = "universitas".split()
+  query = "university".split()
   top_k = bm25.get_top_n(query, corpus, n=5)
   print(top_k)
 
