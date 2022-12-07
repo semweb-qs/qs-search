@@ -2,6 +2,8 @@ import csv
 from unidecode import unidecode
 from fuzzywuzzy import process
 from termcolor import colored, cprint
+from fuzzy_search.fuzzy_phrase_searcher import FuzzyPhraseSearcher
+from fuzzy_search.fuzzy_phrase_model import PhraseModel
 
 
 def load_csv():
@@ -17,8 +19,6 @@ def generate_fuzzy_model():
   csv_file = csv_file[1:]
   column_size = len(csv_file[0])
   row_size = len(csv_file)
-  from fuzzy_search.fuzzy_phrase_searcher import FuzzyPhraseSearcher
-  from fuzzy_search.fuzzy_phrase_model import PhraseModel
 
   # highger matching thresholds for higher quality OCR/HTR (higher precision, recall should be good anyway)
   # lower matching thresholds for lower quality OCR/HTR (higher recall, as that's the main problem)
@@ -26,7 +26,7 @@ def generate_fuzzy_model():
     "char_match_threshold": 0.2,
     "levenshtein_threshold": 0.2,
     "ignorecase": True,
-    "ngram_size": 2 ,
+    "ngram_size": 2,
     "skip_size": 2,
   }
 
