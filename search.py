@@ -1,10 +1,8 @@
 import csv
 from unidecode import unidecode
-from fuzzywuzzy import process
 from termcolor import colored, cprint
 from fuzzy_search.fuzzy_phrase_searcher import FuzzyPhraseSearcher
 from fuzzy_search.fuzzy_phrase_model import PhraseModel
-from rank_bm25 import BM25Okapi
 from retriv import SearchEngine
 
 UNIVERSITY = "university"
@@ -19,7 +17,7 @@ AWARD = "award"
 def load_csv():
   with open('semweb-data-008.csv', 'r') as f:
     csv_file = list(csv.reader(f))
-  print(csv_file[0])
+  # print(csv_file[0])
   return csv_file
 
 
@@ -45,10 +43,10 @@ def generate_fuzzy_model():
   # create a list of domain keywords and phrases
   domain_phrases = []
   considered_columns = [0, 5, 6, 7, 9]
-  cprint("considered columns:", "yellow")
-  for cols in considered_columns:
-    cprint(head[cols], "blue", end=', ')
-  print()
+  # cprint("considered columns:", "yellow")
+  # for cols in considered_columns:
+  #   cprint(head[cols], "blue", end=', ')
+  # print()
   for i in range(row_size):
     # Nama universitas
     entry = csv_file[i]
@@ -65,14 +63,19 @@ def generate_fuzzy_model():
 
   # register the phrase model with the searcher
   fuzzy_searcher.index_phrase_model(phrase_model)
+  def searcher(query):
+    query = query.split()
+    result = []
+    for q in query:
+      for match in fuzzy_searcher.find_matches(q, include_variants=True):
+        # print(match)
+        if(len(match.string) == len(q)):
+          result.append(match.phrase.phrase_string)
+          break
+    # print(result)
+    return ' '.join(result)
 
-  # take some example texts: meetings of the Dutch States General in January 1725
-  text1 = "aindoesia"
-  # look for matches in the first example text
-  for match in fuzzy_searcher.find_matches(text1):
-    print(match)
-  res = process.extract(text1, domain_phrases, limit=5)
-  print(res)
+  return searcher
 
 
 def bm25_searcher():
@@ -83,7 +86,7 @@ def bm25_searcher():
   row_size = len(csv_file)
   corpus = []
   collection = []
-  print(head[15])
+  # print(head[15])
   id_exist = set()
 
   def insert_to_collection(id, text, jenis):
@@ -111,24 +114,25 @@ def bm25_searcher():
       pass
     if(entry[9]):
       insert_to_collection(entry[9], f"tipe type {entry[9]}" ,TYPE)
-    insert_to_collection(entry[18], f"city kota located location lokasi di at {entry[6]} {entry[5]}" ,CITY)
-    insert_to_collection(entry[19], f"nation country negara located location lokasi di at {entry[5]} {entry[7]}" ,COUNTRY)
-    insert_to_collection(entry[20], f"region benua daerah located location lokasi di at {entry[7]}" ,REGION)
+    insert_to_collection(entry[18], f"city kota located location lokasi di at in {entry[6]} {entry[5]}" ,CITY)
+    insert_to_collection(entry[19], f"nation country negara located location lokasi di at in {entry[5]} {entry[7]}" ,COUNTRY)
+    insert_to_collection(entry[20], f"region benua daerah located location lokasi di at in {entry[7]}" ,REGION)
 
 
   se = SearchEngine("university")
-  print(collection[0:10])
   # print(corpus)
 
   se.index(collection)
-
-  result = se.search("university indonesia")
-  print(result)
+  return se
 
 
 def main():
-  # generate_fuzzy_model()
-  bm25_searcher()
+  QUERY = "univesita indnesia"
+  spell_checker = generate_fuzzy_model()
+  se = bm25_searcher()
+  spell_checked = spell_checker(QUERY)
+  result = se.search(spell_checked, cutoff=10)
+  print(result)
   pass
 
 
