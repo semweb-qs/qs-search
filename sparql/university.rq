@@ -1,0 +1,19 @@
+prefix : <http://qs.hocky.id/v/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix p: <https://qs.hocky.id/p/>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix vcard: <http://www.w3.org/2006/vcard/ns#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+
+CONSTRUCT {
+  ?universityID ?property ?value .
+  ?value rdfs:label ?valueLabel .
+} WHERE {
+  #  VALUES ?universityID { :Q1257946} .
+  VALUES ?universityID {%(queries)s} .
+  ?universityID ?property ?value .
+  OPTIONAL {
+    ?value rdfs:label ?valueLabel .
+  }
+}

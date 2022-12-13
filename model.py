@@ -3,35 +3,27 @@ from typing import Any, Optional
 from pydantic import BaseModel
 from typing import List
 
+class ContentQuery(BaseModel):
+  content: str
+  type: Optional[str]
 
 class SearchQuery(BaseModel):
   content: str
   k: Optional[int] = 10
 
 
-class DocsQuery(BaseModel):
-  part: str
-  cid: str
-
-
 class Result(BaseModel):
-  def __init__(self, score: int, path: str, **data: Any):
+  def __init__(self, score: int, type: str, desc: str, id: str, **data: Any):
     super().__init__(**data)
     self.score = score
-    self.path = path.split('collection')[-1][1:]
-    self.id = path.split('/')[-1]
-    self.excerpt = ""
-    with(open(path, "r")) as buffer:
-      for i in buffer:
-        self.excerpt += i
-        if (len(self.excerpt) > 200):
-          self.excerpt += "..."
-          break
+    self.id = id
+    self.desc = desc
+    self.type = type
 
-  path: Optional[str] = ""
+  type: Optional[str] = ""
+  desc: Optional[str] = ""
   score: Optional[int] = 0
   id: Optional[str] = ""
-  excerpt: Optional[str] = ""
 
 
 class SearchResponse(BaseModel):

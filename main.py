@@ -1,5 +1,3 @@
-import json
-
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -8,7 +6,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from model import ErrorResponse, SearchQuery, SearchResponse, \
-  engine_to_result_list, DocsQuery, get_content, SpellCheckResponse
+  SpellCheckResponse, ContentQuery
 from search import generate_fuzzy_model, bm25_searcher
 
 load_dotenv()
@@ -69,6 +67,15 @@ async def spellcheck(query: SearchQuery):
   return SpellCheckResponse(200, result, changed)
 
 
+@app.post("/content", response_model=SearchResponse)
+async def content(query: ContentQuery):
+  spell_checked = SPELL_CHECKER(query.content)
+  result = list(SEARCH_ENGINE.search(spell_checked, cutoff=10))
+  for i in range(len(result)):
+    # print(result[i])
+    result[i]['score'] = float(result[i]['score'])
+  return SearchResponse(200, result)
+
 def common_error(err: Exception):
   """
   Returns abnormal JSONResponse
@@ -79,4 +86,4 @@ def common_error(err: Exception):
 
 
 if __name__ == "__main__":
-  uvicorn.run("main:app", host="0.0.0.0", port=8080, log_level="info")
+  uvicorn.run("main:app", host="0.0.0.0", port=8080, log_level="info", reload=True)
