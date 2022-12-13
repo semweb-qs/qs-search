@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 import uvicorn
@@ -53,24 +54,9 @@ async def read_root():
   }
 
 
-def universityParser(triples: List[dict]):
-  print(triples)
-  first_data = triples[0]
-  return {
-    "type": "University",
-    "name": first_data["universityName"]["value"]
-  }
-
-
-parser_dict = {
-  "university": universityParser
-}
-
 def computeContent(query: ContentQuery):
-  triples = select(query.type, query.id)
-  parser = parser_dict[query.type]
-  ret = parser(triples)
-  return ret
+  triples = construct(query.type, query.id)
+  return json.loads(triples)
 
 
 @app.post("/search", response_model=SearchResponse)
@@ -82,9 +68,12 @@ async def search(query: SearchQuery):
     result[i]['score'] = float(result[i]['score'])
   print(result[0]['id'])
   contentID, type = result[0]['id'].split()
-  top_result = (computeContent(ContentQuery(contentID, type))
+  top_result = {
+    "content": (computeContent(ContentQuery(contentID, type))
                 if len(result) > 0
-                else dict())
+                else dict()),
+    "type": type
+  }
   return SearchResponse(200, result, top_result)
 
 

@@ -16,11 +16,9 @@ def select(type="university", queryID='Q1073666'):
 def construct(type="university", queryID='Q1073666'):
   with open(f'sparql/{type}.rq') as f:
     query = f.read() % {'queries': f':{queryID}'}
-    print(query)
     sparql.setQuery(query)
     ret = sparql.queryAndConvert()
-    ret = ret.serialize()
-    print(ret)
+    ret = ret.serialize(format='json-ld')
     return ret
 
 

@@ -1,0 +1,34 @@
+@prefix : <http://qs.hocky.id/v/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix p: <https://qs.hocky.id/p/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:Q1257946 a :PublicUniversity ;
+    rdfs:label "Tallinn University " ;
+    owl:sameAs <http://www.wikidata.org/entity/Q1257946> ;
+    p:hasAwards :2019R801to1000,
+        :2020R801to1000,
+        :2021R801to1000,
+        :2022R1001to1200 ;
+    p:hasFaculty "314"^^xsd:int ;
+    p:hasInternationalStudent "824"^^xsd:int ;
+    p:hasLink "https://www.topuniversities.com/universities/tallinn-university" ;
+    p:hasLogo "https://www.topuniversities.com/sites/default/files/tallinn-university-_592560cf2aeae70239af567b_small.jpg" ;
+    p:hasResearchOutput :VeryHigh ;
+    p:hasSize "M" ;
+    p:hasStudentFacultyRatio 2e+01 ;
+    p:inCity :CityTallinnEstonia .
+
+:2019R801to1000 rdfs:label "Rank 801-1000 in 2019" .
+
+:2020R801to1000 rdfs:label "Rank 801-1000 in 2020" .
+
+:2021R801to1000 rdfs:label "Rank 801-1000 in 2021" .
+
+:2022R1001to1200 rdfs:label "Rank 1001-1200 in 2022" .
+
+:CityTallinnEstonia rdfs:label "Tallinn" .
+
+:PublicUniversity rdfs:label "Public" .
+
