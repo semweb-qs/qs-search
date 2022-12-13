@@ -1,3 +1,5 @@
+from typing import List
+
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -8,7 +10,7 @@ from starlette.responses import JSONResponse
 from model import ErrorResponse, SearchQuery, SearchResponse, \
   SpellCheckResponse, ContentQuery, ContentResponse
 from search import generate_fuzzy_model, bm25_searcher
-from sparql import construct
+from sparql import construct, select
 
 load_dotenv()
 app = FastAPI()
@@ -51,9 +53,24 @@ async def read_root():
   }
 
 
+def universityParser(triples: List[dict]):
+  print(triples)
+  first_data = triples[0]
+  return {
+    "type": "University",
+    "name": first_data["universityName"]["value"]
+  }
+
+
+parser_dict = {
+  "university": universityParser
+}
+
 def computeContent(query: ContentQuery):
-  triples = construct(query.type, query.id)
-  return dict()
+  triples = select(query.type, query.id)
+  parser = parser_dict[query.type]
+  ret = parser(triples)
+  return ret
 
 
 @app.post("/search", response_model=SearchResponse)

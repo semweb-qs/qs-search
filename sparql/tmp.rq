@@ -6,13 +6,13 @@ prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 prefix vcard: <http://www.w3.org/2006/vcard/ns#>
 prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
-SELECT
-DISTINCT ?universityID ?universityName
-WHERE {
+CONSTRUCT {
+  ?universityID ?property ?value .
+  ?value rdfs:label ?valueLabel .
+} WHERE {
   #  VALUES ?universityID { :Q1257946} .
   VALUES ?universityID {%(queries)s} .
   ?universityID ?property ?value .
-  ?universityID rdfs:label ?universityName
   OPTIONAL {
     ?value rdfs:label ?valueLabel .
   }
