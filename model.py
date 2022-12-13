@@ -3,9 +3,11 @@ from typing import Any, Optional
 from pydantic import BaseModel
 from typing import List
 
+
 class ContentQuery(BaseModel):
-  content: str
+  id: str
   type: Optional[str]
+
 
 class SearchQuery(BaseModel):
   content: str
@@ -24,6 +26,16 @@ class Result(BaseModel):
   desc: Optional[str] = ""
   score: Optional[int] = 0
   id: Optional[str] = ""
+
+
+class ContentResponse(BaseModel):
+  def __init__(self, code: int, results: dict, **data: Any):
+    super().__init__(**data)
+    self.code = code
+    self.results = results
+
+  results: Optional[dict] = {}
+  code: Optional[int] = 500
 
 
 class SearchResponse(BaseModel):

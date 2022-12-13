@@ -6,8 +6,9 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from model import ErrorResponse, SearchQuery, SearchResponse, \
-  SpellCheckResponse, ContentQuery
+  SpellCheckResponse, ContentQuery, ContentResponse
 from search import generate_fuzzy_model, bm25_searcher
+from sparql import construct
 
 load_dotenv()
 app = FastAPI()
@@ -67,14 +68,12 @@ async def spellcheck(query: SearchQuery):
   return SpellCheckResponse(200, result, changed)
 
 
-@app.post("/content", response_model=SearchResponse)
+@app.post("/content", response_model=ContentResponse)
 async def content(query: ContentQuery):
-  spell_checked = SPELL_CHECKER(query.content)
-  result = list(SEARCH_ENGINE.search(spell_checked, cutoff=10))
-  for i in range(len(result)):
-    # print(result[i])
-    result[i]['score'] = float(result[i]['score'])
-  return SearchResponse(200, result)
+  triples = construct(query.type, query.id)
+
+  return SearchResponse(200, dict())
+
 
 def common_error(err: Exception):
   """
@@ -86,4 +85,5 @@ def common_error(err: Exception):
 
 
 if __name__ == "__main__":
-  uvicorn.run("main:app", host="0.0.0.0", port=8080, log_level="info", reload=True)
+  uvicorn.run("main:app", host="0.0.0.0", port=8080, log_level="info",
+              reload=True)

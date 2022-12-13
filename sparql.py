@@ -9,11 +9,10 @@ def construct(type="university", queryID='Q1073666'):
     query = f.read() % {'queries': f':{queryID}'}
     print(query)
     sparql.setQuery(query)
-
     ret = sparql.queryAndConvert()
     ret = ret.serialize()
     print(ret)
-
+    return ret
 
 def describe():
   with open('sparql/playground.rq') as f:
@@ -26,6 +25,6 @@ def describe():
     ret = ret.serialize(format='json-ld')
     print(ret)
 
-
-construct()
+if __name__ == '__main__':
+    construct()
 # describe()
