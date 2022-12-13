@@ -1,3 +1,5 @@
+import json
+
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -53,7 +55,10 @@ async def read_root():
 @app.post("/search", response_model=SearchResponse)
 async def search(query: SearchQuery):
   spell_checked = SPELL_CHECKER(query.content)
-  result = SEARCH_ENGINE.search(spell_checked, cutoff=10)
+  result = list(SEARCH_ENGINE.search(spell_checked, cutoff=10))
+  for i in range(len(result)):
+    # print(result[i])
+    result[i]['score'] = float(result[i]['score'])
   return SearchResponse(200, result)
 
 
