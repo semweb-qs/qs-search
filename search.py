@@ -124,7 +124,7 @@ def bm25_searcher():
     except:
       pass
     if (entry[9]):
-      insert_to_collection(entry[9], f"tipe type {entry[9]}", TYPE)
+      insert_to_collection(f"{entry[9]}University", f"tipe type {entry[9]}", TYPE)
     insert_to_collection(entry[18],
                          f"city kota located location lokasi di at in {entry[6]} {entry[5]}",
                          CITY)
