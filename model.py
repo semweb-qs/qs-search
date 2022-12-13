@@ -5,7 +5,11 @@ from typing import List
 
 
 class ContentQuery(BaseModel):
-  id: str
+  def __init__(self, id: str, type: str, **data: Any):
+    super().__init__(**data)
+    self.id = id
+    self.type = type
+  id: Optional[str]
   type: Optional[str]
 
 
@@ -34,16 +38,20 @@ class ContentResponse(BaseModel):
     self.code = code
     self.results = results
 
-  results: Optional[dict] = {}
+  results: Optional[dict] = dict()
   code: Optional[int] = 500
 
 
 class SearchResponse(BaseModel):
-  def __init__(self, code: int, results: List[Result], **data: Any):
+  def __init__(self, code: int, results: List[Result],
+      top_result: Optional[dict],
+      **data: Any):
     super().__init__(**data)
     self.code = code
     self.results = results
+    self.top_result = top_result
 
+  top_result: Optional[dict] = dict()
   results: Optional[List[Result]] = []
   code: Optional[int] = 500
 

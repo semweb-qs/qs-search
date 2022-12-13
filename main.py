@@ -51,6 +51,11 @@ async def read_root():
   }
 
 
+def computeContent(query: ContentQuery):
+  triples = construct(query.type, query.id)
+  return dict()
+
+
 @app.post("/search", response_model=SearchResponse)
 async def search(query: SearchQuery):
   spell_checked = SPELL_CHECKER(query.content)
@@ -58,7 +63,12 @@ async def search(query: SearchQuery):
   for i in range(len(result)):
     # print(result[i])
     result[i]['score'] = float(result[i]['score'])
-  return SearchResponse(200, result)
+  print(result[0]['id'])
+  contentID, type = result[0]['id'].split()
+  top_result = (computeContent(ContentQuery(contentID, type))
+                if len(result) > 0
+                else dict())
+  return SearchResponse(200, result, top_result)
 
 
 @app.post("/spellcheck", response_model=SpellCheckResponse)
@@ -70,9 +80,9 @@ async def spellcheck(query: SearchQuery):
 
 @app.post("/content", response_model=ContentResponse)
 async def content(query: ContentQuery):
-  triples = construct(query.type, query.id)
+  result = computeContent(query)
 
-  return SearchResponse(200, dict())
+  return ContentResponse(200, result)
 
 
 def common_error(err: Exception):
