@@ -11,7 +11,7 @@ from starlette.responses import JSONResponse
 from model import ErrorResponse, SearchQuery, SearchResponse, \
   SpellCheckResponse, ContentQuery, ContentResponse
 from search import generate_fuzzy_model, bm25_searcher
-from sparql import construct, select
+from sparql import construct, select, constructBatch
 
 load_dotenv()
 app = FastAPI()
@@ -59,15 +59,23 @@ def computeContent(query: ContentQuery):
   return json.loads(triples)
 
 
+def computeSearchResult(result: str):
+  triples = constructBatch(result)
+  print(triples)
+  return json.loads(triples)
+
+
 @app.post("/search", response_model=SearchResponse)
 async def search(query: SearchQuery):
   spell_checked = SPELL_CHECKER(query.content)
+  changed = not (spell_checked == query.content)
   result = list(SEARCH_ENGINE.search(spell_checked, cutoff=10))
   for i in range(len(result)):
     # print(result[i])
     result[i]['score'] = float(result[i]['score'])
-  print(result[0]['id'])
+  # print(result[0]['id'])
   contentID, type = result[0]['id'].split()
+  print(result)
   top_result = {
     "content": (computeContent(ContentQuery(contentID, type))
                 if len(result) > 0
@@ -75,7 +83,8 @@ async def search(query: SearchQuery):
     "type": type,
     "id": contentID
   }
-  return SearchResponse(200, result, top_result)
+  desc = computeSearchResult(" ".join([f":{res['id'].split()[0]}" for res in result]))
+  return SearchResponse(200, result, desc, top_result, spell_checked, changed)
 
 
 @app.post("/spellcheck", response_model=SpellCheckResponse)

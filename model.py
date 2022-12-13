@@ -9,6 +9,7 @@ class ContentQuery(BaseModel):
     super().__init__(**data)
     self.id = id
     self.type = type
+
   id: Optional[str]
   type: Optional[str]
 
@@ -44,15 +45,24 @@ class ContentResponse(BaseModel):
 
 class SearchResponse(BaseModel):
   def __init__(self, code: int, results: List[Result],
+      desc: Optional[dict],
       top_result: Optional[dict],
+      spell_checked: str,
+      changed: bool,
       **data: Any):
     super().__init__(**data)
     self.code = code
     self.results = results
+    self.desc = desc
     self.top_result = top_result
+    self.spell_checked = spell_checked
+    self.changed = changed
 
   top_result: Optional[dict] = dict()
   results: Optional[List[Result]] = []
+  spell_checked: Optional[str] = ""
+  desc: Optional[dict] = dict()
+  changed: Optional[bool] = False
   code: Optional[int] = 500
 
 
