@@ -63,15 +63,20 @@ def generate_fuzzy_model():
 
   # register the phrase model with the searcher
   fuzzy_searcher.index_phrase_model(phrase_model)
+
   def searcher(query):
     query = query.split()
     result = []
     for q in query:
+      done = False
       for match in fuzzy_searcher.find_matches(q, include_variants=True):
         # print(match)
-        if(len(match.string) == len(q)):
+        if (len(match.string) == len(q)):
           result.append(match.phrase.phrase_string)
+          done = True
           break
+      if (not done):
+        result.append(q)
     # print(result)
     return ' '.join(result)
 
@@ -112,12 +117,17 @@ def bm25_searcher():
                            YEAR)
     except:
       pass
-    if(entry[9]):
-      insert_to_collection(entry[9], f"tipe type {entry[9]}" ,TYPE)
-    insert_to_collection(entry[18], f"city kota located location lokasi di at in {entry[6]} {entry[5]}" ,CITY)
-    insert_to_collection(entry[19], f"nation country negara located location lokasi di at in {entry[5]} {entry[7]}" ,COUNTRY)
-    insert_to_collection(entry[20], f"region benua daerah located location lokasi di at in {entry[7]}" ,REGION)
-
+    if (entry[9]):
+      insert_to_collection(entry[9], f"tipe type {entry[9]}", TYPE)
+    insert_to_collection(entry[18],
+                         f"city kota located location lokasi di at in {entry[6]} {entry[5]}",
+                         CITY)
+    insert_to_collection(entry[19],
+                         f"nation country negara located location lokasi di at in {entry[5]} {entry[7]}",
+                         COUNTRY)
+    insert_to_collection(entry[20],
+                         f"region benua daerah located location lokasi di at in {entry[7]}",
+                         REGION)
 
   se = SearchEngine("university")
   # print(corpus)

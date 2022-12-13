@@ -1,0 +1,21 @@
+prefix : <http://www.example.org/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+CONSTRUCT {
+  ?s ?p ?o .
+  ?o rdfs:label ?labelO .
+  ?p rdfs:label ?labelP .
+} WHERE {
+  ?s ?p ?o
+  OPTIONAL {
+    ?o rdfs:label ?labelO
+  }
+  OPTIONAL {
+    ?p rdfs:label ?labelP
+  }
+  VALUES ?s { %(queries)s }
+}
+  #DESCRIBE
+  #SELECT * WHERE {
+  #  ?s ?p ?o
+  #}
