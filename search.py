@@ -13,6 +13,11 @@ TYPE = "type"
 YEAR = "year"
 AWARD = "award"
 
+EXTRAS = "city kota located location lokasi di at in nation country negara located " \
+         "location lokasi di at in region benua daerah located location lokasi di" \
+         " at in qs world ranking list peringkat daftar tahun year tipe type " \
+         " qs world ranking peringkat ke award penghargaan tahun year"
+
 
 def load_csv():
   with open('semweb-data-008.csv', 'r') as f:
@@ -42,6 +47,7 @@ def generate_fuzzy_model():
   fuzzy_searcher = FuzzyPhraseSearcher(config)
   # create a list of domain keywords and phrases
   domain_phrases = []
+  domain_phrases.extend(list(set(EXTRAS.split())))
   considered_columns = [0, 5, 6, 7, 9]
   # cprint("considered columns:", "yellow")
   # for cols in considered_columns:
@@ -69,7 +75,7 @@ def generate_fuzzy_model():
     result = []
     for q in query:
       done = False
-      for match in fuzzy_searcher.find_matches(q, include_variants=True):
+      for match in fuzzy_searcher.find_matches(q, include_variants=True, skip_exact_matching=True):
         # print(match)
         if (len(match.string) == len(q)):
           result.append(match.phrase.phrase_string)
@@ -129,7 +135,7 @@ def bm25_searcher():
                          f"region benua daerah located location lokasi di at in {entry[7]}",
                          REGION)
 
-  se = SearchEngine("university")
+  se = SearchEngine(stopwords=[], stemmer=None, index_name="university")
   # print(corpus)
 
   se.index(collection)

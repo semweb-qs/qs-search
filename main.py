@@ -72,7 +72,8 @@ async def search(query: SearchQuery):
     "content": (computeContent(ContentQuery(contentID, type))
                 if len(result) > 0
                 else dict()),
-    "type": type
+    "type": type,
+    "id": contentID
   }
   return SearchResponse(200, result, top_result)
 
